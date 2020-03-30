@@ -1,0 +1,11 @@
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/mydbjava?useUnicode=true
+    driver-class-name: com.mysql.jdbc.Driver
+    username: "root"
+    password: "0314"
+
+
+mybatis:
+  type-aliases-package: com.zyq.shopserver.system.entity
+  mapper-locations: classpath:com/zyq/shopserver/system/mapper/*.xml
