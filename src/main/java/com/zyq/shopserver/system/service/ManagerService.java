@@ -10,4 +10,7 @@ public interface ManagerService {
     List<Manager> getUsers(String query, Integer pagenum, Integer pagesize);
     Integer addUser(Manager manager);
     Integer editUserState(Integer uid, Integer state);
+    Integer editUserInfo(Integer uid, String email, String mobile);
+    Integer deleteUser(Integer id);
+    Integer editUserRole(Integer uid, Integer rid);
 }

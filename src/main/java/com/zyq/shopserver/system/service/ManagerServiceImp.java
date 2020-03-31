@@ -37,4 +37,19 @@ public class ManagerServiceImp implements ManagerService {
     public Integer editUserState(Integer uid, Integer state) {
         return managerMapper.editUserState(uid, state);
     }
+
+    @Override
+    public Integer editUserInfo(Integer uid, String email, String mobile) {
+        return managerMapper.editUserInfo(uid, email, mobile);
+    }
+
+    @Override
+    public Integer deleteUser(Integer id) {
+        return managerMapper.deleteUser(id);
+    }
+
+    @Override
+    public Integer editUserRole(Integer uid, Integer rid) {
+        return managerMapper.editUserRole(uid, rid);
+    }
 }

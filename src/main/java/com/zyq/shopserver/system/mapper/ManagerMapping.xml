@@ -30,11 +30,23 @@
         select a.*, b.role_name from sp_manager a, sp_role b where a.mg_name like "%"#{query}"%" and a.role_id=b.role_id
     </select>
 
-    <insert id="addUser" parameterType="com.zyq.shopserver.system.entity.Manager">
+    <insert id="jsonUser" parameterType="com.zyq.shopserver.system.entity.Manager">
         insert into sp_manager(mg_name, mg_pwd, mg_time, role_id, mg_mobile, mg_email, mg_state) values (#{manager.mg_name}, #{manager.mg_pwd}, #{manager.mg_time}, #{manager.role_id}, #{manager.mg_mobile}, #{manager.mg_email}, #{manager.mg_state});
     </insert>
 
     <update id="editUserState">
         update sp_manager set mg_state = #{state} where mg_id = #{uid}
+    </update>
+
+    <update id="editUserInfo">
+        update sp_manager set mg_email = #{email}, mg_mobile = #{mobile} where mg_id = #{id}
+    </update>
+
+    <delete id="deleteUser">
+        delete from sp_manager where mg_id = #{id}
+    </delete>
+
+    <update id="editUserRole">
+        update sp_manager set role_id = #{rid} where mg_id=#{uid} and (select role_id from sp_role where role_id = #{rid}) is not null
     </update>
 </mapper>

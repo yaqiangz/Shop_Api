@@ -13,4 +13,7 @@ public interface ManagerMapper {
     List<Manager> getUsers(@Param("query") String query);
     Integer addUser(@Param("manager") Manager manager);
     Integer editUserState(@Param("uid") Integer uid, @Param("state") Integer state);
+    Integer editUserInfo(@Param("id") Integer uid, @Param("email") String email, @Param("mobile") String mobile);
+    Integer deleteUser(@Param("id") Integer id);
+    Integer editUserRole(@Param("uid") Integer uid, @Param("rid") Integer rid);
 }

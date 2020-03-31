@@ -2,16 +2,19 @@ package com.zyq.shopserver.system.controller;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.serializer.SerializerFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.zyq.shopserver.security.constants.SecurityConstants;
+import com.zyq.shopserver.system.entity.JsonUser;
 import com.zyq.shopserver.system.entity.Manager;
 import com.zyq.shopserver.system.service.ManagerService;
-import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.util.*;
 
 @Controller
@@ -21,6 +24,7 @@ public class ManagerController {
     ManagerService managerService;
     @Autowired
     PasswordEncoder passwordEncoder;
+
     @GetMapping(value = "/users", produces = "application/json;charset=utf-8")
     @ResponseBody
     public String getUsers(@RequestParam(value = "query", required = false) String username, Integer pagenum, Integer pagesize) {
@@ -70,16 +74,23 @@ public class ManagerController {
         resultMap.put("meta", metaMap);
         return JSON.toJSONString(resultMap, SerializerFeature.WriteMapNullValue);
     }
+
     @ResponseBody
     @PostMapping(value = "/users", produces = "application/json;charset=utf-8")
-    public String addUser(String username, String password, String email, String mobile) {
+    public String addUser(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        ObjectMapper objectMapper = new ObjectMapper();
+        JsonUser jsonUser = objectMapper.readValue(request.getInputStream(), JsonUser.class);
+        String username = jsonUser.getUsername();
+        String password = jsonUser.getPassword();
+        String email = jsonUser.getEmail();
+        String mobile = jsonUser.getMobile();
         Map<String, Object> resultMap = new LinkedHashMap<>();
         Map<String, Object> dataMap = new LinkedHashMap<>();
         Map<String, Object> metaMap = new LinkedHashMap<>();
         if (password == null || username == null) {
-            if (password == null)
+            if (password == "null")
                 metaMap.put("msg", "密码不能为空");
-            if (username == null)
+            if (username == "null")
                 metaMap.put("msg", "用户名不能为空");
             metaMap.put("status", HttpServletResponse.SC_BAD_REQUEST);
             dataMap = null;
@@ -117,9 +128,10 @@ public class ManagerController {
         resultMap.put("meta", metaMap);
         return JSON.toJSONString(resultMap, SerializerFeature.WriteMapNullValue);
     }
+
     @ResponseBody
     @PutMapping(value = "/users/{uid}/state/{type}", produces = "application/json;charset=utf-8")
-    public String editUserState(@PathVariable("uid") Integer uid,@PathVariable("type") Integer type) {
+    public String editUserState(@PathVariable("uid") Integer uid, @PathVariable("type") Integer type) {
         Map<String, Object> resultMap = new LinkedHashMap<>();
         Map<String, Object> dataMap = new LinkedHashMap<>();
         Map<String, Object> metaMap = new LinkedHashMap<>();
@@ -163,6 +175,95 @@ public class ManagerController {
             dataMap.put("email", userByUserId.getMg_email());
             metaMap.put("msg", "查询成功");
             metaMap.put("msg", HttpServletResponse.SC_OK);
+        }
+        resultMap.put("data", dataMap);
+        resultMap.put("meta", metaMap);
+        return JSON.toJSONString(resultMap, SerializerFeature.WriteMapNullValue);
+    }
+
+    @ResponseBody
+    @PutMapping(value = "/users/{id}", produces = "application/json;charset=utf-8")
+    public String editUserInfo(@PathVariable("id") Integer id, String email, String mobile) {
+        Map<String, Object> resultMap = new LinkedHashMap<>();
+        Map<String, Object> dataMap = new LinkedHashMap<>();
+        Map<String, Object> metaMap = new LinkedHashMap<>();
+        Manager manager;
+        if (email == null)
+            email = "";
+        if (mobile == null)
+            mobile = "";
+        Integer editResult = managerService.editUserInfo(id, email, mobile);
+        if (editResult == 0) {
+            dataMap = null;
+            metaMap.put("msg", "管理员ID不存在");
+            metaMap.put("status", HttpServletResponse.SC_BAD_REQUEST);
+        } else {
+            manager = managerService.findUserByUserId(id);
+            dataMap.put("id", manager.getMg_id());
+            dataMap.put("username", manager.getMg_name());
+            dataMap.put("role_id", manager.getRole_id());
+            dataMap.put("mobile", manager.getMg_mobile());
+            dataMap.put("email", manager.getMg_email());
+            metaMap.put("msg", "更新成功");
+        }
+        resultMap.put("data", dataMap);
+        resultMap.put("meta", metaMap);
+        return JSON.toJSONString(resultMap, SerializerFeature.WriteMapNullValue);
+    }
+    @ResponseBody
+    @DeleteMapping(value = "/users/{id}", produces = "application/json;charset=utf-8")
+    public String deleteUser(@PathVariable("id") Integer id) {
+        Map<String, Object> resultMap = new LinkedHashMap<>();
+        Map<String, Object> dataMap = null;
+        Map<String, Object> metaMap = new LinkedHashMap<>();
+        Integer deleteResult = managerService.deleteUser(id);
+        if (deleteResult == 0) {
+            metaMap.put("msg", "删除失败");
+            metaMap.put("status", HttpServletResponse.SC_BAD_REQUEST);
+        } else {
+            metaMap.put("msg", "删除成功");
+            metaMap.put("status", HttpServletResponse.SC_OK);
+        }
+        resultMap.put("data", dataMap);
+        resultMap.put("meta", metaMap);
+        return JSON.toJSONString(resultMap, SerializerFeature.WriteMapNullValue);
+    }
+    @ResponseBody
+    @PutMapping(value = "/users/{id}/role", produces = "application/json;charset=utf-8")
+    public String editUserRole(@PathVariable("id") Integer id, HttpServletRequest request, HttpServletResponse response) throws IOException {
+        Map<String, Object> resultMap = new LinkedHashMap<>();
+        Map<String, Object> dataMap = new LinkedHashMap<>();
+        Map<String, Object> metaMap = new LinkedHashMap<>();
+        ObjectMapper objectMapper = new ObjectMapper();
+        JsonUser jsonUser = objectMapper.readValue(request.getInputStream(), JsonUser.class);
+        Integer rid = jsonUser.getRid();
+        if (rid == null) {
+            dataMap = null;
+            metaMap.put("msg", "角色ID不能为空");
+            metaMap.put("status", HttpServletResponse.SC_BAD_REQUEST);
+        } else {
+            Manager userByUserId = managerService.findUserByUserId(id);
+            if (userByUserId == null) {
+                dataMap = null;
+                metaMap.put("msg", "管理员ID不存在");
+                metaMap.put("status", HttpServletResponse.SC_BAD_REQUEST);
+            } else {
+                Integer editResult = managerService.editUserRole(id, rid);
+                if (editResult == 0) {
+                    dataMap = null;
+                    metaMap.put("msg", "角色ID不存在");
+                    metaMap.put("status", HttpServletResponse.SC_BAD_REQUEST);
+                } else {
+                    userByUserId = managerService.findUserByUserId(id);
+                    dataMap.put("id", userByUserId.getMg_id());
+                    dataMap.put("rid", userByUserId.getRole_id());
+                    dataMap.put("username", userByUserId.getMg_name());
+                    dataMap.put("mobile", userByUserId.getMg_mobile());
+                    dataMap.put("email", userByUserId.getMg_email());
+                    metaMap.put("msg", "设置角色成功");
+                    metaMap.put("status", HttpServletResponse.SC_OK);
+                }
+            }
         }
         resultMap.put("data", dataMap);
         resultMap.put("meta", metaMap);

@@ -16,7 +16,7 @@ class ShopserverApplicationTests {
     ManagerService managerService;
     @Test
     void contextLoads() {
-        System.out.println(managerService.editUserState(509, 0));
+        managerService.editUserRole(509, 34);
     }
 
 }
