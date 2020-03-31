@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zyq.shopserver.system.mapper.PermissionMapper">
+    <resultMap id="BaseResultMap" type="com.zyq.shopserver.system.entity.PermissionList">
+        <id property="id" jdbcType="SMALLINT" column="ps_id"/>
+        <result property="authName" jdbcType="VARCHAR" column="ps_name"/>
+        <result property="pid" jdbcType="SMALLINT" column="ps_pid"/>
+        <result property="level" jdbcType="VARCHAR" column="ps_level"/>
+        <result property="path" jdbcType="VARCHAR" column="ps_api_path"/>
+    </resultMap>
+    <resultMap id="BaseResultMapTree" type="com.zyq.shopserver.system.entity.PermissionTree">
+        <id property="id" jdbcType="SMALLINT" column="ps_id"/>
+        <result property="authName" jdbcType="VARCHAR" column="ps_name"/>
+        <result property="level" jdbcType="VARCHAR" column="ps_level"/>
+        <result property="path" jdbcType="VARCHAR" column="ps_api_path"/>
+        <result property="pid" jdbcType="SMALLINT" column="ps_pid"/>
+        <collection property="children" ofType="BaseResultMapTree" column="ps_id" select="getChildrenByPid" javaType="java.util.ArrayList"></collection>
+    </resultMap>
+    <select id="getAllPermissionsList" resultMap="BaseResultMap">
+        select sp_permission.*, sp_permission_api.ps_api_path from sp_permission, sp_permission_api
+    </select>
+    <select id="getChildrenByPid" resultMap="BaseResultMapTree">
+        select a.*, b.ps_api_path from sp_permission a, sp_permission_api b where a.ps_pid = #{ps_id}
+    </select>
+    <select id="getAllPermissionTree" resultMap="BaseResultMapTree">
+        select a.*, b.ps_api_path from sp_permission a, sp_permission_api b where a.ps_id=b.ps_id and (a.ps_pid = a.ps_id or a.ps_pid = 0)
+    </select>
+</mapper>
