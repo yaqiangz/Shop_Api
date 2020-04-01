@@ -1,13 +1,14 @@
 package com.zyq.shopserver.system.entity;
 
 import com.alibaba.fastjson.annotation.JSONField;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonView;
 
 import java.util.List;
 
 //@JsonIgnoreProperties(value = {"ps_level"})
 public class PermissionTree {
+    public interface SimpleView{};
+
     @JSONField(ordinal = 1)
     private Integer id;
     @JSONField(ordinal = 2)
@@ -18,9 +19,11 @@ public class PermissionTree {
     @JSONField(ordinal = 3)
     private String path;
     @JSONField(ordinal = 4)
-    private Integer pid;
+    private Object pid;
     @JSONField(ordinal = 6)
     private List<PermissionTree> children;
+    @JSONField(ordinal = 7)
+    private Integer order;
 
     @Override
     public String toString() {
@@ -29,11 +32,21 @@ public class PermissionTree {
                 ", authName='" + authName + '\'' +
                 ", level='" + level + '\'' +
                 ", path='" + path + '\'' +
-                ", pid=" + pid +
+                ", pid='" + pid + '\'' +
                 ", children=" + children +
+                ", order=" + order +
                 '}';
     }
 
+    @JsonView(SimpleView.class)
+    public Integer getOrder() {
+        return order;
+    }
+
+    public void setOrder(Integer order) {
+        this.order = order;
+    }
+    @JsonView(SimpleView.class)
     public Integer getId() {
         return id;
     }
@@ -41,7 +54,7 @@ public class PermissionTree {
     public void setId(Integer id) {
         this.id = id;
     }
-
+    @JsonView(SimpleView.class)
     public String getAuthName() {
         return authName;
     }
@@ -57,7 +70,7 @@ public class PermissionTree {
     public void setLevel(String level) {
         this.level = level;
     }
-
+    @JsonView(SimpleView.class)
     public String getPath() {
         return path;
     }
@@ -66,14 +79,14 @@ public class PermissionTree {
         this.path = path;
     }
 
-    public Integer getPid() {
+    public Object getPid() {
         return pid;
     }
 
-    public void setPid(Integer pid) {
+    public void setPid(Object pid) {
         this.pid = pid;
     }
-
+    @JsonView(SimpleView.class)
     public List<PermissionTree> getChildren() {
         return children;
     }

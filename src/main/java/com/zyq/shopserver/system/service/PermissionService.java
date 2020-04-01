@@ -8,4 +8,5 @@ import java.util.List;
 public interface PermissionService {
     List<PermissionList> getAllPermissionsList();
     List<PermissionTree> getAllPermissionTree();
+    List<PermissionTree> getMenuPermissionTree();
 }

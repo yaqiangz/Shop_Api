@@ -4,25 +4,32 @@
     <resultMap id="BaseResultMap" type="com.zyq.shopserver.system.entity.PermissionList">
         <id property="id" jdbcType="SMALLINT" column="ps_id"/>
         <result property="authName" jdbcType="VARCHAR" column="ps_name"/>
-        <result property="pid" jdbcType="SMALLINT" column="ps_pid"/>
         <result property="level" jdbcType="VARCHAR" column="ps_level"/>
         <result property="path" jdbcType="VARCHAR" column="ps_api_path"/>
+        <result property="pid" jdbcType="VARCHAR" column="ps_pid"/>
     </resultMap>
-    <resultMap id="BaseResultMapTree" type="com.zyq.shopserver.system.entity.PermissionTree">
-        <id property="id" jdbcType="SMALLINT" column="ps_id"/>
-        <result property="authName" jdbcType="VARCHAR" column="ps_name"/>
-        <result property="level" jdbcType="VARCHAR" column="ps_level"/>
-        <result property="path" jdbcType="VARCHAR" column="ps_api_path"/>
+<!--    获取所有权限列表的返回类型-->
+    <resultMap id="AllTreeMap" type="com.zyq.shopserver.system.entity.PermissionTree" extends="BaseResultMap">
         <result property="pid" jdbcType="SMALLINT" column="ps_pid"/>
-        <collection property="children" ofType="BaseResultMapTree" column="ps_id" select="getChildrenByPid" javaType="java.util.ArrayList"></collection>
+        <collection property="children" ofType="AllTreeMap" column="ps_id" select="getChildrenByPid" javaType="java.util.ArrayList"></collection>
+    </resultMap>
+    <resultMap id="MenuTreeMap" type="com.zyq.shopserver.system.entity.PermissionTree" extends="BaseResultMap">
+        <result property="order" jdbcType="INTEGER" column="ps_api_order"/>
+        <collection property="children" ofType="MenuTreeMap" column="ps_id" select="getMenuChildrenByPid" javaType="java.util.ArrayList"></collection>
     </resultMap>
     <select id="getAllPermissionsList" resultMap="BaseResultMap">
-        select sp_permission.*, sp_permission_api.ps_api_path from sp_permission, sp_permission_api
+        select a.*, b.ps_api_path from sp_permission a, sp_permission_api b where a.ps_id=b.ps_id
     </select>
-    <select id="getChildrenByPid" resultMap="BaseResultMapTree">
-        select a.*, b.ps_api_path from sp_permission a, sp_permission_api b where a.ps_pid = #{ps_id}
+    <select id="getChildrenByPid" resultMap="AllTreeMap">
+        select a.*, b.ps_api_path from sp_permission a, sp_permission_api b where a.ps_pid = #{ps_id} and a.ps_id=b.ps_id and ((a.ps_level+0) = (select ps_level from sp_permission where ps_id=#{ps_id})+0+1)
     </select>
-    <select id="getAllPermissionTree" resultMap="BaseResultMapTree">
+    <select id="getAllPermissionTree" resultMap="AllTreeMap">
         select a.*, b.ps_api_path from sp_permission a, sp_permission_api b where a.ps_id=b.ps_id and (a.ps_pid = a.ps_id or a.ps_pid = 0)
+    </select>
+    <select id="getMenuChildrenByPid" resultMap="AllTreeMap">
+        select a.*, b.ps_api_path, b.ps_api_order from sp_permission a, sp_permission_api b where a.ps_pid = #{ps_id} and a.ps_id=b.ps_id and ((a.ps_level+0) = (select ps_level from sp_permission where ps_id=#{ps_id})+0+1)
+    </select>
+    <select id="getMenuPermissionTree" resultMap="MenuTreeMap">
+        select a.*, b.ps_api_path, b.ps_api_order from sp_permission a, sp_permission_api b where a.ps_id=b.ps_id and a.ps_level='0' order by ps_api_order
     </select>
 </mapper>

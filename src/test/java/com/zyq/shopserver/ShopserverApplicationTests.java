@@ -19,14 +19,11 @@ class ShopserverApplicationTests {
     @Test
     void contextLoads() {
         int count = 0;
-        List<PermissionTree> allPermissionTree = permissionService.getAllPermissionTree();
+        List<PermissionTree> allPermissionTree = permissionService.getMenuPermissionTree();
         for (PermissionTree permissionTree : allPermissionTree) {
-            if (permissionTree.getChildren().size()>0) {
-                System.out.println(permissionTree);
-                count++;
-            }
+            System.out.println(permissionTree);
         }
-        System.out.println(count);
+        System.out.println(allPermissionTree.size());
     }
 
 }

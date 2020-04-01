@@ -1,5 +1,6 @@
 package com.zyq.shopserver.system.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 import java.util.ArrayList;
@@ -111,7 +112,6 @@ public class Manager {
     public Integer getMg_status() {
         return mg_state;
     }
-
     public void setMg_status(Integer mg_state) {
         this.mg_state = mg_state;
     }

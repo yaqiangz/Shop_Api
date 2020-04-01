@@ -21,4 +21,9 @@ public class PermissionServiceImp implements PermissionService {
     public List<PermissionTree> getAllPermissionTree() {
         return permissionMapper.getAllPermissionTree();
     }
+
+    @Override
+    public List<PermissionTree> getMenuPermissionTree() {
+        return permissionMapper.getMenuPermissionTree();
+    }
 }

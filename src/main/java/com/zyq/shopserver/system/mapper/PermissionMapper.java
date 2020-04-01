@@ -12,4 +12,5 @@ public interface PermissionMapper {
     List<PermissionList> getAllPermissionsList();
     List<PermissionTree> getAllPermissionTree();
     List<PermissionTree> getChildrenByPid(@Param("id") Integer id);
+    List<PermissionTree> getMenuPermissionTree();
 }
