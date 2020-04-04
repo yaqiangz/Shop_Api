@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zyq.shopserver.system.mapper.CategoryMapper">
+    <resultMap id="BaseResultMap" type="com.zyq.shopserver.system.entity.Category">
+        <id column="cat_id" property="cat_id"/>
+        <result column="cat_name" property="cat_name"/>
+        <result column="cat_pid" property="cat_pid"/>
+        <result column="cat_level" property="cat_level"/>
+        <result column="cat_deleted" property="cat_deleted"/>
+        <discriminator javaType="java.lang.Integer" column="cat_level">
+            <case value="0" resultMap="ChildMap"/>
+            <case value="1" resultMap="ChildMap"/>
+        </discriminator>
+    </resultMap>
+    <resultMap id="ChildMap" type="com.zyq.shopserver.system.entity.Category">
+        <collection property="children" ofType="BaseResultMap" column="{cat_id=cat_id,p_level=cat_level}" select="getChildrenByPid" javaType="java.util.ArrayList"></collection>
+    </resultMap>
+    <select id="getAllCategories" resultMap="BaseResultMap">
+        select * from sp_category where cat_level=0 and cat_deleted=0
+    </select>
+    <select id="getChildrenByPid" resultMap="BaseResultMap">
+        select * from sp_category where cat_pid=#{cat_id} and cat_level=#{p_level}+1 and cat_deleted=0
+    </select>
+</mapper>
