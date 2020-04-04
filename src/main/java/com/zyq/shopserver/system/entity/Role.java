@@ -1,37 +1,46 @@
 package com.zyq.shopserver.system.entity;
 
-public class Role {
-    private Integer role_id;
-    private String role_name;
-    private String ps_ids;
-    private String ps_ca;
-    private String role_desc;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonView;
 
+import java.io.Serializable;
+import java.util.List;
+
+public class Role implements Serializable {
+    private Integer roleId;
+    private String roleName;
+    @JsonIgnore
+    private String ps_ids;
+    @JsonIgnore
+    private String ps_ca;
+    private String roleDesc;
+    private List<PermissionTree> children;
     @Override
     public String toString() {
         return "Role{" +
-                "role_id=" + role_id +
-                ", role_name='" + role_name + '\'' +
+                "roleId=" + roleId +
+                ", roleName='" + roleName + '\'' +
                 ", ps_ids='" + ps_ids + '\'' +
                 ", ps_ca='" + ps_ca + '\'' +
-                ", role_desc='" + role_desc + '\'' +
+                ", roleDesc='" + roleDesc + '\'' +
+                ", children=" + children +
                 '}';
     }
 
-    public Integer getRole_id() {
-        return role_id;
+    public Integer getId() {
+        return roleId;
     }
 
-    public void setRole_id(Integer role_id) {
-        this.role_id = role_id;
+    public void setId(Integer roleId) {
+        this.roleId = roleId;
     }
 
-    public String getRole_name() {
-        return role_name;
+    public String getRoleName() {
+        return roleName;
     }
 
-    public void setRole_name(String role_name) {
-        this.role_name = role_name;
+    public void setRoleName(String roleName) {
+        this.roleName = roleName;
     }
 
     public String getPs_ids() {
@@ -50,11 +59,19 @@ public class Role {
         this.ps_ca = ps_ca;
     }
 
-    public String getRole_desc() {
-        return role_desc;
+    public String getroleDesc() {
+        return roleDesc;
     }
 
-    public void setRole_desc(String role_desc) {
-        this.role_desc = role_desc;
+    public void setroleDesc(String roleDesc) {
+        this.roleDesc = roleDesc;
+    }
+
+    public List<PermissionTree> getChildren() {
+        return children;
+    }
+
+    public void setChildren(List<PermissionTree> permissions) {
+        this.children = permissions;
     }
 }

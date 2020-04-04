@@ -11,6 +11,6 @@ import java.util.List;
 public interface PermissionMapper {
     List<PermissionList> getAllPermissionsList();
     List<PermissionTree> getAllPermissionTree();
-    List<PermissionTree> getChildrenByPid(@Param("id") Integer id);
+    List<PermissionTree> getChildrenByPid(@Param("ps_id") Integer id);
     List<PermissionTree> getMenuPermissionTree();
 }

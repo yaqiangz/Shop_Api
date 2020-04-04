@@ -50,10 +50,10 @@
      </select>
      ```
 
-   2. 返回对象自动转换成json, 过滤其中某些属性:
+2. 返回对象自动转换成json, 过滤其中某些属性:
 
       在需要过滤的属性上添加`@JSONField(serialize = false)`注解(当使用fastjson生成json时)
 
       在类上添加`@JsonIgnoreProperties(value = {"ps_level"})`注解以及在getter方法上添加`@JsonIgnore`注解和`JsonView`是使用springboot自动生成json时使用.
 
-   
+3. 使用自定义对象作为Mybatis的mapper参数时, 该对象需实现Serializable接口
