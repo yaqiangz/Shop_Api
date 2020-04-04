@@ -1,8 +1,9 @@
 package com.zyq.shopserver.system.entity;
 
+import java.io.Serializable;
 import java.util.List;
 
-public class Category {
+public class Category implements Serializable {
     private Integer cat_id;
     private String cat_name;
     private Integer cat_pid;

@@ -57,3 +57,10 @@
       在类上添加`@JsonIgnoreProperties(value = {"ps_level"})`注解以及在getter方法上添加`@JsonIgnore`注解和`JsonView`是使用springboot自动生成json时使用.
 
 3. 使用自定义对象作为Mybatis的mapper参数时, 该对象需实现Serializable接口
+4. 动态设置Mybatis的ResultMap属性, 使用`discriminator`标签
+5. Mybatis插入后返回主键, 使用`useGeneratedKeys="true" keyProperty="category.cat_id"`注解指定返回的主键存在传入参数对象的cat_id属性中
+    ```xml
+    <insert id="addCategory" useGeneratedKeys="true" keyProperty="category.cat_id" parameterType="com.zyq.shopserver.system.entity.Category">
+        insert into sp_category(cat_pid, cat_name, cat_level) values (#{category.cat_pid}, #{category.cat_name}, #{category.cat_level})
+    </insert>
+    ```

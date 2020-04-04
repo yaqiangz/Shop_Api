@@ -21,4 +21,18 @@
     <select id="getChildrenByPid" resultMap="BaseResultMap">
         select * from sp_category where cat_pid=#{cat_id} and cat_level=#{p_level}+1 and cat_deleted=0
     </select>
+    <insert id="addCategory" useGeneratedKeys="true" keyProperty="category.cat_id" parameterType="com.zyq.shopserver.system.entity.Category">
+        insert into sp_category(cat_pid, cat_name, cat_level) values (#{category.cat_pid}, #{category.cat_name}, #{category.cat_level})
+    </insert>
+    <select id="getCategoryById" resultType="com.zyq.shopserver.system.entity.Category">
+        select * from sp_category where cat_id = #{cat_id}
+    </select>
+
+    <update id="editCategory">
+        update sp_category set cat_name = #{cat_name} where cat_id = #{cat_id}
+    </update>
+
+    <delete id="deleteCategory">
+        delete from sp_category where cat_id = #{cat_id}
+    </delete>
 </mapper>
