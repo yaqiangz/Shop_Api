@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zyq.shopserver.system.mapper.GoodsMapper">
+    <select id="getGoodsList" resultType="com.zyq.shopserver.system.entity.Goods">
+        select * from sp_goods where goods_name like "%"#{query}"%" and is_del = '0'
+    </select>
+    <select id="getGoodsByName" resultType="com.zyq.shopserver.system.entity.Goods">
+        select * from sp_goods where goods_name = #{goods_name} and is_del = '0' limit 1
+    </select>
+    <insert id="insertGoods" useGeneratedKeys="true" keyProperty="goods.goods_id" parameterType="com.zyq.shopserver.system.entity.Goods">
+        insert into sp_goods(goods_name, goods_price, goods_number, goods_weight, cat_id, goods_introduce, goods_big_logo, goods_small_logo, is_del, add_time, upd_time, delete_time, cat_one_id, cat_two_id, cat_three_id, hot_mumber, is_promote, goods_state) values ('${goods.goods_name}', ${goods.goods_price}, ${goods.goods_number}, ${goods.goods_weight}, ${goods.cat_three_id}, '${goods.goods_introduce}', '${goods.goods_big_logo}', '${goods.goods_small_logo}', '${goods.is_del}', ${goods.add_time}, ${goods.upd_time}, ${goods.delete_time}, ${goods.cat_one_id}, ${goods.cat_two_id}, ${goods.cat_three_id}, ${goods.hot_mumber}, ${goods.is_promote}, ${goods.goods_state})
+    </insert>
+    <insert id="insertPics" parameterType="com.zyq.shopserver.system.entity.GoodPic">
+        insert into sp_goods_pics (goods_id, pics_big, pics_mid, pics_sma) values (#{goods_id}, #{pic.pics_big}, #{pic.pics_mid}, #{pic.pics_sma})
+    </insert>
+    <insert id="insertAttr" useGeneratedKeys="true" keyProperty="attr.attr_id" parameterType="com.zyq.shopserver.system.entity.GoodAttr">
+        insert into sp_attribute(attr_name, cat_id, attr_sel, attr_write, attr_value) values (#{attr.attr_name}, #{attr.cat_id}, #{attr.attr_sel}, #{attr.attr_write}, #{attr.attr_value})
+    </insert>
+
+    <insert id="insertGoodAttr" parameterType="com.zyq.shopserver.system.entity.GoodAttr">
+        insert into sp_goods_attr(goods_id, attr_id, attr_value, add_price) values (#{goods_id}, #{attr.attr_id}, #{attr.attr_value}, #{attr.add_price})
+    </insert>
+</mapper>

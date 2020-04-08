@@ -64,3 +64,4 @@
         insert into sp_category(cat_pid, cat_name, cat_level) values (#{category.cat_pid}, #{category.cat_name}, #{category.cat_level})
     </insert>
     ```
+6. Mybatis模糊查找中文失败, 英文和数字没问题, 解决方法是在配置文件的数据库连接url中加上`&characterEncoding=utf-8`

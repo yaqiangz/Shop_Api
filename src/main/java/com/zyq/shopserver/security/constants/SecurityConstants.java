@@ -34,6 +34,7 @@ public class SecurityConstants {
     public static final String TOKEN_PREFIX = "Bearer ";
     public static final String TOKEN_TYPE = "JWT";
     public static final Boolean REMEMBER_ME = false;
+    public static final String SERVER_AND_PORT = "http://127.0.0.1:8888/";
 
     private SecurityConstants() {
     }
