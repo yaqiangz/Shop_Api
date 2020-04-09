@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zyq.shopserver.system.mapper.OrderMapper">
+    <resultMap id="BaseResultMap" type="com.zyq.shopserver.system.entity.Order">
+        <id column="order_id" property="orderId"/>
+        <result column="user_id" property="userId"/>
+        <result column="order_number" property="orderNumber"/>
+        <result column="order_price" property="orderPrice"/>
+        <result column="order_pay" property="orderPay"/>
+        <result column="is_send" property="isSend"/>
+        <result column="trade_no" property="tradeNo"/>
+        <result column="order_invoice_title" property="orderInvoiceTitle"/>
+        <result column="order_invoice_company" property="orderInvoiceCompany"/>
+        <result column="order_invoice_content" property="orderInvoiceContent"/>
+        <result column="consignee_addr" property="consigneeAddr"/>
+        <result column="pay_status" property="payStatus"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+    </resultMap>
+    <resultMap id="BaseGoodsMap" type="com.zyq.shopserver.system.entity.OrderGoods">
+        <id column="id" property="id"/>
+        <result column="order_id" property="orderId"/>
+        <result column="goods_id" property="goodsId"/>
+        <result column="goods_price" property="goodsPrice"/>
+        <result column="goods_number" property="goodsNumber"/>
+        <result column="goods_total_price" property="goodsTotalPrice"/>
+    </resultMap>
+    <resultMap id="OrderDetailsMap" extends="BaseResultMap" type="com.zyq.shopserver.system.entity.Order">
+        <collection property="goods" select="getGoodsByOrderId" column="order_id" ofType="OrderDetailsMap" javaType="java.util.ArrayList"></collection>
+    </resultMap>
+    <select id="getAllOrders" resultMap="BaseResultMap">
+        select * from sp_order limit #{offset}, #{pagesize}
+    </select>
+    <select id="getOrdersCount" resultType="java.lang.Integer">
+        select count(order_id) from sp_order
+    </select>
+    <update id="editOrder">
+        update sp_order
+        <set>
+            <if test="order.isSend != null and order.isSend != '' and order.isSend != 'null'">
+                is_send = #{order.isSend},
+            </if>
+            <if test="order.orderPay != null and order.orderPay != '' and order.orderPay != 'null'">
+                order_pay = #{order.orderPay},
+            </if>
+            <if test="order.orderPrice != null">
+                order_price = #{order.orderPrice},
+            </if>
+            <if test="order.orderNumber != null and order.orderNumber != '' and order.orderNumber != 'null'">
+                order_number = #{order.orderNumber},
+            </if>
+            <if test="order.payStatus != null and order.payStatus != '' and order.payStatus != 'null'">
+                pay_status = #{order.payStatus},
+            </if>
+        </set>
+        where order_id = #{order.orderId}
+    </update>
+    <select id="getOrderById" resultMap="OrderDetailsMap">
+        select * from sp_order where order_id = #{order_id}
+    </select>
+    <select id="getGoodsByOrderId" resultMap="BaseGoodsMap">
+        select * from sp_order_goods where order_id = #{order_id}
+    </select>
+    <update id="editAddrByOrderId">
+        update sp_order set consignee_addr = #{addr} where order_id = #{order_id}
+    </update>
+</mapper>

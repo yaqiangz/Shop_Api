@@ -32,14 +32,14 @@
      `getAllPermissionTree`中根据业务需求添加条件, 去除重复的子权限(即只选择没有父权限或父权限为本身的结果)
 
      ```xml
-         <resultMap id="BaseResultMapTree" type="com.zyq.shopserver.system.entity.PermissionTree">
-             <id property="id" jdbcType="SMALLINT" column="ps_id"/>
-             <result property="authName" jdbcType="VARCHAR" column="ps_name"/>
-             <result property="level" jdbcType="VARCHAR" column="ps_level"/>
-             <result property="path" jdbcType="VARCHAR" column="ps_api_path"/>
-             <result property="pid" jdbcType="SMALLINT" column="ps_pid"/>
-             <collection property="children" ofType="BaseResultMapTree" column="ps_id" select="getChildrenByPid" javaType="java.util.ArrayList"></collection>
-         </resultMap>
+     <resultMap id="BaseResultMapTree" type="com.zyq.shopserver.system.entity.PermissionTree">
+         <id property="id" jdbcType="SMALLINT" column="ps_id"/>
+         <result property="authName" jdbcType="VARCHAR" column="ps_name"/>
+         <result property="level" jdbcType="VARCHAR" column="ps_level"/>
+         <result property="path" jdbcType="VARCHAR" column="ps_api_path"/>
+         <result property="pid" jdbcType="SMALLINT" column="ps_pid"/>
+         <collection property="children" ofType="BaseResultMapTree" column="ps_id" select="getChildrenByPid" javaType="java.util.ArrayList"></collection>
+     </resultMap>
      <select id="getChildrenByPid" resultMap="BaseResultMapTree">
          select a.*, b.ps_api_path from sp_permission a, sp_permission_api b 
          where a.ps_pid = #{ps_id}
@@ -65,3 +65,13 @@
     </insert>
     ```
 6. Mybatis模糊查找中文失败, 英文和数字没问题, 解决方法是在配置文件的数据库连接url中加上`&characterEncoding=utf-8`
+7. fastjson返回日期格式化
+    ```
+    @JSONField(name = "update_time", ordinal = 14, format = "yyyy-MM-dd HH:mm:ss")
+    ```
+8. Mybatis ResultMap返回对象中的属性是利用对象Setter注入的
+9. fastjson动态过滤属性
+    ```java
+    SimplePropertyPreFilter filter = new SimplePropertyPreFilter(Order.class, "order_id");
+    return JSON.toJSONString(resultMap, filter, SerializerFeature.WriteMapNullValue);
+    ```
